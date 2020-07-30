@@ -1,0 +1,42 @@
+version: "3.8"
+
+volumes:
+  dev_webrtc_client_node_modules: {}
+  dev_webrtc_server_node_modules: {}
+
+services:
+  webrtc_client:
+    build:
+      context: .
+      dockerfile: compose/webrtc/client/Dockerfile
+    image: webrtc_client_dev
+    volumes:
+      - ./client:/app
+      - ./server/src/public:/app/src/dist
+      - dev_webrtc_client_node_modules:/app/node_modules
+    networks:
+      - webrtc-net
+    restart: unless-stopped
+    tty: true
+
+  webrtc_server:
+    build:
+      context: .
+      dockerfile: compose/webrtc/server/Dockerfile
+    image: webrtc_server_dev
+    volumes:
+      - ./server:/app
+      - dev_webrtc_server_node_modules:/app/node_modules
+    ports:
+      - 3000:3000
+    networks:
+      - webrtc-net
+    depends_on:
+      - webrtc_client
+    restart: unless-stopped
+    tty: true
+
+networks:
+  webrtc-net:
+    name: webrtc-net
+    driver: bridge

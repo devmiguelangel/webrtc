@@ -40,8 +40,8 @@ logs
 
 node_modules
 bower_components
-
 *.sublime*
+dist
 
 psd
 thumb
